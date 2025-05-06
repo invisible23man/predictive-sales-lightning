@@ -1,6 +1,12 @@
-# 📦 Predictive Sales Forecasting App (Lightning + FastAPI)
+# 📦 Predictive Sales Forecasting App (Lightning + FastAPI + Streamlit)
 
-A production-grade machine learning application that forecasts sales using a CNN-LSTM model and serves predictions via a FastAPI REST API. The app is containerized with Docker and follows best practices including config-driven training, reproducibility, and CI/CD readiness.
+A production-grade machine learning application that forecasts sales using a CNN-LSTM model and serves predictions via:
+
+- 🚀 FastAPI REST API
+- 📊 Streamlit Dashboard
+- 📁 MLflow Tracking UI
+
+The entire stack is containerized with Docker Compose and production-ready.
 
 ---
 
@@ -8,18 +14,23 @@ A production-grade machine learning application that forecasts sales using a CNN
 
 ### 🔧 Requirements
 
-* Docker + Docker Compose
-* Python 3.10 (for local development)
+- Docker + Docker Compose
+- Poetry (for local development)
+- Python 3.10+
 
 ---
 
-### 🐳 Run via Docker Compose
+### 🐳 Run the Full Stack
 
 ```bash
-docker-compose up --build
-```
+docker compose up --build
+````
 
-Open docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+Services:
+
+* API: [http://localhost:8000/docs](http://localhost:8000/docs)
+* Dashboard: [http://localhost:8501](http://localhost:8501)
+* MLflow UI: [http://localhost:5000](http://localhost:5000)
 
 ---
 
@@ -32,8 +43,9 @@ poetry run python -m src.ml.train.train
 This will:
 
 * Train a CNN-LSTM time series model
-* Save the model checkpoint to `checkpoints/model.ckpt`
-* Save normalization stats to `checkpoints/normalization.json`
+* Save the checkpoint to `checkpoints/model.ckpt`
+* Save normalization stats
+* Log training metrics to MLflow
 
 ---
 
@@ -41,15 +53,18 @@ This will:
 
 **POST /api/predict**
 
-**Request Body:**
+Request body:
 
 ```json
 {
-  "series": [100.0, 120.5, 130.2, ...]  // must match `window_size` (e.g., 14)
+  "series": [
+    105.5, 110.2, 98.4, 112.0, 111.5, 115.0, 109.8,
+    108.5, 102.1, 107.3, 104.0, 100.0, 103.2, 99.9
+  ]
 }
 ```
 
-**Response:**
+Response:
 
 ```json
 {
@@ -59,15 +74,19 @@ This will:
 
 ---
 
-### 🧪 Tests
+### 📊 Dashboard (Streamlit)
 
-```bash
-poetry run pytest
-```
+Open [http://localhost:8501](http://localhost:8501) and interact with the visual dashboard. Includes:
+
+* Series input
+* Forecast result
+* Optional evaluation visualizations
 
 ---
 
-### ✅ Pre-commit Hooks (Linting)
+### ✅ Dev Commands
+
+#### Lint
 
 ```bash
 poetry run pre-commit run --all-files
@@ -75,44 +94,45 @@ poetry run pre-commit run --all-files
 
 Includes: `black`, `isort`, `flake8`
 
+#### Test
+
+```bash
+poetry run pytest
+```
+
+#### Manual Run
+
+```bash
+poetry run python -m src.ml.train.train
+```
+
 ---
 
-### 📁 Project Structure (Simplified)
+## 📁 Project Structure (Simplified)
 
 ```
+.
 ├── src
-│   ├── app                  # FastAPI app
-│   │   ├── api
-│   │   └── services
-│   ├── ml                   # ML logic
-│   │   ├── data
-│   │   ├── models
-│   │   ├── train
-│   └── config               # Hydra/OmegaConf setup
-├── checkpoints              # Saved models and stats
-├── tests                    # TDD-based test coverage
-├── Dockerfile
+│   ├── app/              # FastAPI application
+│   ├── config/           # OmegaConf YAML & loader
+│   ├── ml/               # ML training, model, eval
+│   └── ui/               # Streamlit dashboard
+├── checkpoints/          # Trained model & stats
+├── tests/                # Unit tests
 ├── docker-compose.yml
-├── pyproject.toml
-└── config/config.yaml
+├── Dockerfile
+├── README.md
+├── docs/
+│   └── architecture.md
+└── pyproject.toml
 ```
-
----
-
-### 📦 ML Pipeline Summary
-
-* CNN + LSTM for sequential sales prediction
-* Sliding window time series data module
-* PyTorch Lightning for clean training loop
-* Model & stats checkpointing
-* MLflow logging supported (optional)
 
 ---
 
 ## ✍️ Author
 
-Gowrisankar — MLOps & ML Engineer | Pythonista | Cloud-native Systems
+Gowrisankar — MLOps & ML Engineer
 
 ---
 
-See `docs/architecture.md` for system design and code architecture diagram.
+See `docs/architecture.md` for the full system design and pipeline explanation.
