@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.mypy_cache
+checkpoints/
+mlruns/

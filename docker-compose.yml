@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: predictive_sales_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: uvicorn src.app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - MLFLOW_ENV=docker
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: streamlit_dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    command: poetry run python -m streamlit run src/ui/streamlit_app/app.py --server.port 8501 --server.headless true
+    environment:
+      - MLFLOW_ENV=docker
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mlflow_tracking
+    volumes:
+      - ./mlruns:/mlruns
+    ports:
+      - "5005:5005"
+    command: mlflow server --host 0.0.0.0 --port 5005 --backend-store-uri /mlruns --default-artifact-root /mlruns
+    environment:
+      - MLFLOW_ENV=docker

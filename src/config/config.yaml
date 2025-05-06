@@ -1,0 +1,27 @@
+data:
+  csv_path: "data/raw/sales_data.csv"
+  available_categories: ["Beauty", "Clothing", "Electronics"]
+  item_id: "Beauty"
+  window_size: 14
+  batch_size: 32
+
+model:
+  architecture: "CNNLSTM"
+  input_size: 1
+  conv_channels: 32
+  lstm_hidden: 64
+  lstm_layers: 1
+  lr: 0.001
+
+
+train:
+  max_epochs: 10
+  gpus: 0
+  seed: 42
+  mlflow_tracking_uri: "http://127.0.0.1:5005"
+  experiment_name: "sales-forecast"
+  checkpoint_path: "checkpoints/model.ckpt"
+  normalization_path: "checkpoints/normalization.json"
+
+app:
+  api_url: "http://localhost:8000/api"

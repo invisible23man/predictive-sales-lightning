@@ -19,6 +19,10 @@ mlflow = "^2.12.1"
 pytorch-lightning = "^2.2.4"
 openpyxl = "^3.1.2"
 torch = "2.2.2"
+omegaconf = "^2.3.0"
+loguru = "^0.7.3"
+streamlit = "^1.45.0"
+plotly = "^6.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
@@ -26,8 +30,10 @@ pytest-cov = "^5.0.0"
 black = "^24.4.0"
 isort = "^5.13.2"
 pre-commit = "^3.7.0"
+flake8 = "^7.2.0"
 
 [tool.pytest.ini_options]
+pythonpath = ["src"]
 addopts = "--cov=src --cov-report=term-missing"
 
 [tool.black]
