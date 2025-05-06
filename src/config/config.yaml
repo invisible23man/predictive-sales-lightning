@@ -22,3 +22,6 @@ train:
   experiment_name: "sales-forecast"
   checkpoint_path: "checkpoints/model.ckpt"
   normalization_path: "checkpoints/normalization.json"
+
+app:
+  api_url: "http://localhost:8000/api"
