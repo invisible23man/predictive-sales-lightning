@@ -1,116 +1,123 @@
-# 🧱 Architecture Overview: Predictive Sales Forecasting System
+# 🧱 Architecture Overview: Sales Forecasting System
 
-This document explains the high-level system design of the ML pipeline, inference service, dashboard, and MLflow integration.
+This document outlines the architecture of the ML-powered time series forecasting pipeline including training, inference, APIs, and UI integrations.
 
 ---
 
-## 🗂️ Component Breakdown
+## 🗂️ Components
 
-### 1. 🔄 Training Pipeline
+### 1. ⚙️ Config System (OmegaConf)
+- Centralized `config.yaml` manages:
+  - Data source
+  - Available categories
+  - Model hyperparameters
+  - MLflow + API endpoints
+- Auto-adjusts based on `MLFLOW_ENV` (e.g., Docker vs local)
 
-- Script: `src/ml/train/train.py`
-- Uses `SalesDataModule` to load and normalize data
-- Trains CNN + LSTM model
+---
+
+### 2. 🧠 Training Pipeline
+
+- Modular `train_model_for_category()` trains per category
 - Saves:
-  - Model weights (`model.ckpt`)
-  - Normalization stats (`normalization.json`)
-- Logs metrics to MLflow
-
-### 2. 🧠 Model: `CNNLSTMForecastModel`
-
-- Conv1D for feature extraction
-- LSTM for temporal modeling
-- Fully connected layer for regression
-
-### 3. 📈 Evaluation
-
-- Computes RMSE on validation data
-- Optionally plots predictions vs. true values
-- Metrics & plots logged to MLflow
-
-### 4. 🧠 Inference Module: `SalesForecaster`
-
-- Loads model + normalization
-- Normalizes input
-- Runs prediction
-- Denormalizes output
-
-### 5. 🚀 FastAPI Server
-
-- Endpoint: `/api/predict`
-- Validates request (length must match `window_size`)
-- Returns forecast as JSON
-
-### 6. 📊 Streamlit Dashboard
-
-- File: `src/ui/streamlit_app/app.py`
-- Provides a simple UI to enter input and get predictions
-- Can be extended with charts, comparison, evaluation
-
-### 7. 🔧 Configuration (OmegaConf)
-
-- `config/config.yaml` contains:
-  - `data` settings (path, window size)
-  - `model` architecture
-  - `train` params (epochs, paths, mlflow)
+  - `model_<category>.ckpt`
+  - `normalization_<category>.json`
+  - Evaluation plot
+- Logs all to MLflow with tags (`item_id`, `lr`, etc.)
 
 ---
 
-## 🖼️ System Architecture Diagram
+### 3. 🧪 Evaluation
+
+- RMSE, MAE logged per run
+- Matplotlib plot saved and logged
+- Optionally shown in Streamlit
+
+---
+
+### 4. 🚀 FastAPI Services
+
+| Endpoint        | Purpose                             |
+|----------------|-------------------------------------|
+| `/api/predict` | Predict sales for given series      |
+| `/api/train`   | Train model(s) by category          |
+| `/api/train_all` | Train all predefined categories     |
+
+---
+
+### 5. 📊 Streamlit Dashboard
+
+| Feature           | Details                              |
+|------------------|--------------------------------------|
+| Category Explorer| Line plots + rolling average         |
+| Predict Sales    | Manual input → model → prediction    |
+| Train Models     | Select categories, run training live |
+
+All routes dynamically load categories from `config.yaml`.
+
+---
+
+## 🔄 MLflow Integration
+
+- Experiment: `sales-forecast`
+- Run name: `CNNLSTM-{category}`
+- Metrics, plots, checkpoints, and configs logged
+- Uses local SQLite backend by default (Docker volume)
+
+---
+
+## 🧱 System Diagram
 
 ````
 
 ```
-          +--------------------+
-          |  sales_data.csv    |
-          +--------------------+
-                   |
-            [Train Script]
-                   |
-  +----------------v----------------+
-  |     SalesDataModule (norm)      |
-  +----------------+----------------+
-                   |
-       +-----------v----------+
-       |  CNN + LSTM Model    | <---+
-       +-----------+----------+     |
-                   |                |
-  +----------------v----------+     |
-  |  model.ckpt + norm.json   |-----+
-  +---------------------------+
+               +-------------+
+               | sales_data.csv
+               +-------------+
+                      |
+               [Train Script / FastAPI]
+                      |
+         +------------v-------------+
+         | SalesDataModule (norm)   |
+         +------------+-------------+
+                      |
+              +-------v--------+
+              | CNNLSTM Model  |
+              +-------+--------+
+                      |
+           +----------v--------+           +--------------+
+           | model_<cat>.ckpt  |---------> | FastAPI /predict |
+           | norm_<cat>.json   |           +--------------+
+           +-------------------+                |
+                                                v
+                                      +-------------------+
+                                      | Streamlit Forecast |
+                                      +-------------------+
 ```
-
-\[FastAPI App]             \[Streamlit Dashboard]
-\|                            |
-+-------v------+            +--------v---------+
-\| SalesForecaster|         | Input time series |
-\| (Load & predict)|         | via web UI       |
-+-------+--------+          +------------------+
-|
-+-------v--------+
-\|  /api/predict  |
-+----------------+
 
 ```
 
 ---
 
-## 🌍 Multi-Service Setup
+## 🚀 CI + Reproducibility
 
-- **Docker Compose** launches:
-  - `api` → FastAPI app
-  - `dashboard` → Streamlit UI
-  - `mlflow` → Tracking server
-
----
-
-## 🔮 Possible Enhancements
-
-- Add Prometheus/Grafana for monitoring
-- Extend support for multiple item types
-- Add MLflow model registry
-- Use real time-series validation (e.g., walk-forward)
+- `Dockerfile` + `docker-compose.yml`
+- `poetry.lock` for pinned dependencies
+- Configurable training & inference
+- MLflow for all experiments
+- Test coverage via Pytest
+- Lint: `black`, `isort`, `flake8` via Pre-commit
 
 ---
 
-See `README.md` for usage instructions and commands.
+## 🌱 Future Enhancements
+
+- Support multi-step forecasting
+- Add Prometheus + Grafana monitoring
+- Use LangChain or RAG for user-guided analytics
+- Scale with Kubernetes
+
+---
+
+📁 See `README.md` for usage guide.
+```
