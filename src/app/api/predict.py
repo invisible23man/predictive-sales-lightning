@@ -1,7 +1,8 @@
+from typing import List
+
+import torch
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import List
-import torch
 
 from src.app.services.checkpoint_loader import load_model_from_checkpoint
 

@@ -1,7 +1,9 @@
 import os
+
 import pytorch_lightning as pl
 from loguru import logger
 from pytorch_lightning.loggers import MLFlowLogger
+
 from src.config.utils import load_config
 from src.ml.data.module import SalesDataModule
 from src.ml.models.model import CNNLSTMForecastModel
@@ -28,7 +30,7 @@ def main():
     )
 
     trainer.fit(model, datamodule)
-    
+
     os.makedirs(os.path.dirname(cfg.train.checkpoint_path), exist_ok=True)
     trainer.save_checkpoint(cfg.train.checkpoint_path)
     logger.success(f"Model checkpoint saved to {cfg.train.checkpoint_path}")

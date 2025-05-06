@@ -1,7 +1,8 @@
+import pytorch_lightning as pl
 import torch
 import torch.nn as nn
-import pytorch_lightning as pl
 from omegaconf import DictConfig
+
 from src.config.schema import ModelConfig
 
 
@@ -25,12 +26,12 @@ class CNNLSTMForecastModel(pl.LightningModule):
         self.criterion = nn.MSELoss()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = x.unsqueeze(1)        # [B, 1, T]
+        x = x.unsqueeze(1)  # [B, 1, T]
         x = torch.relu(self.conv1(x))  # [B, C, T']
-        x = x.permute(0, 2, 1)    # [B, T', C]
+        x = x.permute(0, 2, 1)  # [B, T', C]
         _, (hn, _) = self.lstm(x)
-        out = self.fc(hn[-1])     # [B, 1]
-        return out.squeeze(1)     # [B]
+        out = self.fc(hn[-1])  # [B, 1]
+        return out.squeeze(1)  # [B]
 
     def training_step(self, batch, batch_idx):
         x, y = batch

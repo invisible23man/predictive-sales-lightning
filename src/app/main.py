@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from src.app.api import health, predict
 
 app = FastAPI()

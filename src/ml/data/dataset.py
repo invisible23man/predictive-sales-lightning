@@ -11,6 +11,8 @@ class SalesDataset(Dataset):
         return len(self.series) - self.window_size
 
     def __getitem__(self, idx):
-        x = self.series[idx:idx + self.window_size]
+        x = self.series[idx : idx + self.window_size]
         y = self.series[idx + self.window_size]
-        return torch.tensor(x, dtype=torch.float32), torch.tensor(y, dtype=torch.float32)
+        return torch.tensor(x, dtype=torch.float32), torch.tensor(
+            y, dtype=torch.float32
+        )

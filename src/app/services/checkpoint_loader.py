@@ -1,6 +1,8 @@
 import os
+
 import pytorch_lightning as pl
-from omegaconf import OmegaConf, DictConfig
+from omegaconf import DictConfig, OmegaConf
+
 from src.ml.models.model import CNNLSTMForecastModel
 
 

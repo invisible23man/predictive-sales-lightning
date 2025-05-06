@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional
 
+
 @dataclass
 class DataConfig:
     csv_path: str
     item_id: str
     window_size: int
     batch_size: int
+
 
 @dataclass
 class ModelConfig:
@@ -15,7 +17,8 @@ class ModelConfig:
     lstm_hidden: int = 64
     lstm_layers: int = 1
     lr: float = 0.001
-    
+
+
 @dataclass
 class TrainConfig:
     max_epochs: int
@@ -23,5 +26,4 @@ class TrainConfig:
     seed: int
     mlflow_tracking_uri: Optional[str]
     experiment_name: Optional[str]
-    checkpoint_path: str  
-
+    checkpoint_path: str

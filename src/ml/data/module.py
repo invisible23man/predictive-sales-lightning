@@ -1,11 +1,13 @@
 from typing import Optional
+
 import pandas as pd
-from torch.utils.data import DataLoader
+from omegaconf import DictConfig
 from pytorch_lightning import LightningDataModule
 from sklearn.model_selection import train_test_split
-from omegaconf import DictConfig
-from src.ml.data.dataset import SalesDataset
+from torch.utils.data import DataLoader
+
 from src.config.schema import DataConfig
+from src.ml.data.dataset import SalesDataset
 
 
 class SalesDataModule(LightningDataModule):
@@ -27,12 +29,16 @@ class SalesDataModule(LightningDataModule):
         series = (series - self.series_mean) / (self.series_std + 1e-6)
 
         # Split
-        train_series, val_series = train_test_split(series, test_size=0.2, shuffle=False)
+        train_series, val_series = train_test_split(
+            series, test_size=0.2, shuffle=False
+        )
         self.train_dataset = SalesDataset(train_series, self.cfg.window_size)
         self.val_dataset = SalesDataset(val_series, self.cfg.window_size)
 
     def train_dataloader(self) -> DataLoader:
-        return DataLoader(self.train_dataset, batch_size=self.cfg.batch_size, shuffle=True)
+        return DataLoader(
+            self.train_dataset, batch_size=self.cfg.batch_size, shuffle=True
+        )
 
     def val_dataloader(self) -> DataLoader:
         return DataLoader(self.val_dataset, batch_size=self.cfg.batch_size)
