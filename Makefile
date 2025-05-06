@@ -1,11 +1,20 @@
 up:
-\tdocker-compose up --build
+	docker compose up --build
+
+down:
+	docker compose down
 
 train:
-\tpoetry run python -m src.ml.train.train
+	poetry run python -m src.ml.train.train
 
 lint:
-\tpoetry run pre-commit run --all-files
+	poetry run pre-commit run --all-files
 
 test:
-\tpoetry run pytest
+	poetry run pytest
+
+dashboard:
+	streamlit run src/ui/streamlit_app/app.py
+
+api:
+	poetry run uvicorn src.app.main:app --host 0.0.0.0 --port 8000
