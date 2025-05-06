@@ -12,6 +12,7 @@ class DataConfig:
 
 @dataclass
 class ModelConfig:
+    architecture: str = "CNNLSTM"
     input_size: int = 1
     conv_channels: int = 32
     lstm_hidden: int = 64
