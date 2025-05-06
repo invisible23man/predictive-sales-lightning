@@ -23,7 +23,7 @@ services:
       - "8501:8501"
     volumes:
       - .:/app
-    command: streamlit run src/ui/streamlit_app/app.py --server.port 8501 --server.headless true
+    command: poetry run python -m streamlit run src/ui/streamlit_app/app.py --server.port 8501 --server.headless true
     environment:
       - MLFLOW_ENV=docker
 

@@ -12,8 +12,10 @@ def show_prediction_page():
 
     st.markdown("Enter the last 14 days of sales:")
 
-    default = "105.5, 110.2, 98.4, 112.0, 111.5, 115.0, "
-    "109.8, 108.5, 102.1, 107.3, 104.0, 100.0, 103.2, 99.9"
+    default = (
+        "105.5, 110.2, 98.4, 112.0, 111.5, 115.0, 109.8, "
+        "108.5, 102.1, 107.3, 104.0, 100.0, 103.2, 99.9"
+    )
     input_series = st.text_area("Sales Series", default)
 
     try:
