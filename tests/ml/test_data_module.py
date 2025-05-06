@@ -1,12 +1,21 @@
 import os
+import pytest
+from omegaconf import OmegaConf
 from src.ml.data.module import SalesDataModule
+from src.config.schema import DataConfig
 
 
+@pytest.mark.skipif(not os.path.exists("data/raw/sales_data.csv"), reason="Missing data/raw/sales_data.csv")
 def test_sales_dataloader_shapes():
-    path = "./data/raw/sales_data.csv"
-    assert os.path.exists(path), "Missing sales_data.csv under data/raw"
+    data_cfg = DataConfig(
+        csv_path="data/raw/sales_data.csv",
+        item_id="Beauty",
+        window_size=14,
+        batch_size=4
+    )
+    cfg = OmegaConf.create({"data": data_cfg})
 
-    module = SalesDataModule(csv_path=path, item_id="Beauty", window_size=14, batch_size=4)
+    module = SalesDataModule(cfg)
     module.setup()
 
     batch = next(iter(module.train_dataloader()))

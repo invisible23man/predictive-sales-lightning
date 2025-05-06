@@ -1,0 +1,17 @@
+data:
+  csv_path: "data/raw/sales_data.csv"
+  item_id: "Beauty"
+  window_size: 14
+  batch_size: 32
+
+model:
+  input_size: 1
+  conv_channels: 32
+  lstm_hidden: 64
+  lstm_layers: 1
+  lr: 0.001
+
+train:
+  max_epochs: 10
+  gpus: 0
+  seed: 42
