@@ -1,16 +1,28 @@
 import streamlit as st
 
 from src.app.services.forecaster import SalesForecaster
-from src.config.utils import load_config
 
 
 def show_prediction_page():
     st.title("📊 Forecast Tomorrow's Sales")
 
-    cfg = load_config()
-    forecaster = SalesForecaster(cfg)
+    # --- Category dropdown
+    category = st.selectbox(
+        "Select Product Category", ["Beauty", "Clothing", "Electronics"]
+    )
 
-    st.markdown("Enter the last 14 days of sales:")
+    # --- Load category-specific forecaster
+    try:
+        forecaster = SalesForecaster.from_category(category)
+    except FileNotFoundError:
+        st.error(f"Model for category '{category}' not found.")
+        return
+
+    # --- Input area
+    st.markdown(
+        f"Enter the last {forecaster.cfg.data.window_size} "
+        f"days of sales for **{category}**:"
+    )
 
     default = (
         "105.5, 110.2, 98.4, 112.0, 111.5, 115.0, 109.8, "
@@ -20,10 +32,13 @@ def show_prediction_page():
 
     try:
         series = [float(x.strip()) for x in input_series.split(",")]
-        if len(series) != cfg.data.window_size:
-            st.warning(f"Please provide exactly {cfg.data.window_size} values.")
+        expected = forecaster.cfg.data.window_size
+        if len(series) != expected:
+            st.warning(f"Please provide exactly {expected} values.")
         else:
             prediction = forecaster.forecast(series)
-            st.success(f"✅ Predicted next-day sales: **{prediction:.2f}**")
+            st.success(
+                f"✅ Predicted next-day sales for **{category}**: **{prediction:.2f}**"
+            )
     except Exception as e:
-        st.error(f"Parsing error: {e}")
+        st.error(f"❗ Parsing error: {e}")
