@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "predictive_sales_lightning"
+version = "0.1.0"
+description = "Production-grade predictive sales forecasting app using PyTorch Lightning, FastAPI, and MLflow"
+authors = ["Gowrisankar <gowrisankar2396@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.111.0"
+uvicorn = { extras = ["standard"], version = "^0.30.0" }
+pydantic = "^2.6.4"
+pandas = "^2.2.2"
+numpy = "^1.26.4"
+mlflow = "^2.12.1"
+pytorch-lightning = "^2.2.4"
+openpyxl = "^3.1.2"
+torch = "2.2.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
+pytest-cov = "^5.0.0"
+black = "^24.4.0"
+isort = "^5.13.2"
+pre-commit = "^3.7.0"
+
+[tool.pytest.ini_options]
+addopts = "--cov=src --cov-report=term-missing"
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+known_first_party = ["src"]
+src_paths = ["src"]
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
