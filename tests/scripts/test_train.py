@@ -12,6 +12,7 @@ def test_training_loop_runs():
     cfg = OmegaConf.create(
         {
             "data": {
+                "available_categories": ["Beauty"],
                 "csv_path": "data/raw/sales_data.csv",
                 "item_id": "Beauty",
                 "window_size": 14,

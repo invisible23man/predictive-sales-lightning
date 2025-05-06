@@ -13,6 +13,7 @@ from src.ml.data.module import SalesDataModule
 )
 def test_sales_dataloader_shapes():
     data_cfg = DataConfig(
+        available_categories=["Beauty"],
         csv_path="data/raw/sales_data.csv",
         item_id="Beauty",
         window_size=14,
