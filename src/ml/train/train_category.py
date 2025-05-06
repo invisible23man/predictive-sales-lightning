@@ -69,16 +69,17 @@ def train_model_for_category(category: str, experiment: Optional[str] = None):
         tracking_uri=cfg.train.mlflow_tracking_uri,
         run_name=run_name,
     )
-    mlflow_logger.experiment.set_tags(
-        mlflow_logger.run_id,
-        {
-            "item_id": category,
-            "model": cfg.model.architecture or "CNNLSTM",
-            "dataset": os.path.basename(cfg.data.csv_path),
-            "window_size": str(cfg.data.window_size),
-            "learning_rate": str(cfg.model.lr),
-        },
-    )
+
+    tags = {
+        "item_id": category,
+        "model": cfg.model.architecture or "CNNLSTM",
+        "dataset": os.path.basename(cfg.data.csv_path),
+        "window_size": str(cfg.data.window_size),
+        "learning_rate": str(cfg.model.lr),
+    }
+
+    for key, value in tags.items():
+        mlflow_logger.experiment.set_tag(mlflow_logger.run_id, key, value)
 
     # Train
     trainer = pl.Trainer(
