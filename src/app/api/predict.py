@@ -39,3 +39,18 @@ def predict(request: PredictRequest):
         return PredictResponse(predicted_sales=forecast)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/predict/{category}", response_model=PredictResponse)
+def predict_by_category(category: str, request: PredictRequest):
+    try:
+        forecaster = SalesForecaster.from_category(category)
+        forecast = forecaster.forecast(request.series)
+        return PredictResponse(predicted_sales=forecast)
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Model or stats for category '{category}' not found.",
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
