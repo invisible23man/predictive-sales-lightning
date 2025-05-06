@@ -49,7 +49,9 @@ def train_model_for_category(category: str, experiment: Optional[str] = None):
     logger.success(f"✅ Training complete for {category}")
 
     # Evaluation and logging
-    metrics = evaluate_model(model, datamodule.val_dataloader(), plot=True)
+    metrics = evaluate_model(
+        model, datamodule.val_dataloader(), plot=True, category=category
+    )
     mlflow_logger.log_metrics(metrics)
 
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
