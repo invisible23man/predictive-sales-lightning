@@ -5,6 +5,7 @@ from typing import Optional
 @dataclass
 class DataConfig:
     csv_path: str
+    available_categories: list[str]
     item_id: str
     window_size: int
     batch_size: int

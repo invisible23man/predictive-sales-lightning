@@ -1,5 +1,6 @@
 data:
   csv_path: "data/raw/sales_data.csv"
+  available_categories: ["Beauty", "Clothing", "Electronics"]
   item_id: "Beauty"
   window_size: 14
   batch_size: 32
