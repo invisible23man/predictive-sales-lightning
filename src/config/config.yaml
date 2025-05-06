@@ -15,7 +15,7 @@ train:
   max_epochs: 10
   gpus: 0
   seed: 42
-  mlflow_tracking_uri: "mlruns"
+  mlflow_tracking_uri: "http://127.0.0.1:5000"
   experiment_name: "sales-forecast"
   checkpoint_path: "checkpoints/model.ckpt"
   normalization_path: "checkpoints/normalization.json"
