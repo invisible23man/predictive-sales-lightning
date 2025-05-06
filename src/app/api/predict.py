@@ -1,31 +1,44 @@
 from typing import List
 
-import torch
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
-from src.app.services.checkpoint_loader import load_model_from_checkpoint
+from src.app.services.forecaster import SalesForecaster
+from src.config.utils import load_config
 
 router = APIRouter()
 
+cfg = load_config()
+
 
 class PredictRequest(BaseModel):
-    series: List[float] = Field(..., example=[100.0, 120.5, 130.2])
+    series: List[float] = Field(
+        ..., example=[float(i * 10) for i in range(cfg.data.window_size)]
+    )
+
+    @field_validator("series")
+    @classmethod
+    def check_length(cls, v: List[float]) -> List[float]:
+        expected = cfg.data.window_size
+        if len(v) != expected:
+            raise ValueError(f"Series must contain exactly {expected} values")
+        return v
 
 
 class PredictResponse(BaseModel):
     predicted_sales: float
 
 
-# Load model once at startup
-model = load_model_from_checkpoint("./checkpoints/model.ckpt")
+forecaster = SalesForecaster(cfg)
+forecaster.set_normalization_stats(
+    mean=100.0, std=20.0
+)  # ⚠️ Temporary — replace with saved values
 
 
 @router.post("/predict", response_model=PredictResponse)
 def predict(request: PredictRequest):
     try:
-        x = torch.tensor(request.series).float().unsqueeze(0)  # [1, T]
-        y_hat = model(x)
-        return PredictResponse(predicted_sales=y_hat.item())
+        forecast = forecaster.forecast(request.series)
+        return PredictResponse(predicted_sales=forecast)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
