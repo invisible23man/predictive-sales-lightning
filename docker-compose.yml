@@ -11,6 +11,8 @@ services:
     volumes:
       - .:/app
     command: uvicorn src.app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - MLFLOW_ENV=docker
 
   dashboard:
     build:
@@ -22,14 +24,18 @@ services:
     volumes:
       - .:/app
     command: streamlit run src/ui/streamlit_app/app.py --server.port 8501 --server.headless true
+    environment:
+      - MLFLOW_ENV=docker
 
   mlflow:
-    image: ghcr.io/mlflow/mlflow:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: mlflow_tracking
-    environment:
-      - MLFLOW_BACKEND_STORE_URI=/mlruns
-      - MLFLOW_DEFAULT_ARTIFACT_ROOT=/mlruns
     volumes:
       - ./mlruns:/mlruns
     ports:
-      - "5000:5000"
+      - "5005:5005"
+    command: mlflow server --host 0.0.0.0 --port 5005 --backend-store-uri /mlruns --default-artifact-root /mlruns
+    environment:
+      - MLFLOW_ENV=docker

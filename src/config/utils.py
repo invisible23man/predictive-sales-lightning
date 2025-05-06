@@ -4,12 +4,12 @@ from omegaconf import OmegaConf
 
 
 def load_config(path="src/config/config.yaml"):
-    env = os.getenv("MLFLOW_ENV", "local")
     base_cfg = OmegaConf.load(path)
 
-    if env == "docker":
-        base_cfg.train.mlflow_tracking_uri = "http://mlflow:5000"
-    else:
-        base_cfg.train.mlflow_tracking_uri = "http://localhost:5000"
+    mlflow_env_uri = {"docker": "http://mlflow:5005", "local": "http://localhost:5005"}
 
+    env = os.getenv("MLFLOW_ENV", "local")
+    override_uri = mlflow_env_uri.get(env, base_cfg.train.mlflow_tracking_uri)
+
+    base_cfg.train.mlflow_tracking_uri = override_uri
     return base_cfg
