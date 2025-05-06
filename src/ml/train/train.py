@@ -1,3 +1,4 @@
+import json
 import os
 
 import pytorch_lightning as pl
@@ -34,6 +35,16 @@ def main():
     os.makedirs(os.path.dirname(cfg.train.checkpoint_path), exist_ok=True)
     trainer.save_checkpoint(cfg.train.checkpoint_path)
     logger.success(f"Model checkpoint saved to {cfg.train.checkpoint_path}")
+
+    norm_stats = {
+        "mean": datamodule.series_mean,
+        "std": datamodule.series_std,
+    }
+
+    with open("checkpoints/normalization.json", "w") as f:
+        json.dump(norm_stats, f)
+
+    logger.success("✅ Normalization stats saved to checkpoints/normalization.json")
 
 
 if __name__ == "__main__":

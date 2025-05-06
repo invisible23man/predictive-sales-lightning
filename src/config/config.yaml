@@ -18,3 +18,4 @@ train:
   mlflow_tracking_uri: "mlruns"
   experiment_name: "sales-forecast"
   checkpoint_path: "checkpoints/model.ckpt"
+  normalization_path: "checkpoints/normalization.json"

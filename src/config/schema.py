@@ -27,3 +27,4 @@ class TrainConfig:
     mlflow_tracking_uri: Optional[str]
     experiment_name: Optional[str]
     checkpoint_path: str
+    normalization_path: str

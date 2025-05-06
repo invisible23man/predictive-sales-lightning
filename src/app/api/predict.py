@@ -30,9 +30,6 @@ class PredictResponse(BaseModel):
 
 
 forecaster = SalesForecaster(cfg)
-forecaster.set_normalization_stats(
-    mean=100.0, std=20.0
-)  # ⚠️ Temporary — replace with saved values
 
 
 @router.post("/predict", response_model=PredictResponse)
