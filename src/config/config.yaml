@@ -17,3 +17,4 @@ train:
   seed: 42
   mlflow_tracking_uri: "mlruns"
   experiment_name: "sales-forecast"
+  checkpoint_path: "checkpoints/model.ckpt"

@@ -20,6 +20,7 @@ pytorch-lightning = "^2.2.4"
 openpyxl = "^3.1.2"
 torch = "2.2.2"
 omegaconf = "^2.3.0"
+loguru = "^0.7.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
