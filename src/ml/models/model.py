@@ -1,14 +1,14 @@
 import torch
 import torch.nn as nn
 import pytorch_lightning as pl
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 from src.config.schema import ModelConfig
 
 
 class CNNLSTMForecastModel(pl.LightningModule):
     def __init__(self, cfg: DictConfig):
         super().__init__()
-        self.cfg: ModelConfig = OmegaConf.to_object(cfg.model)
+        self.cfg: ModelConfig = ModelConfig(**cfg.model)
 
         self.conv1 = nn.Conv1d(
             in_channels=self.cfg.input_size,

@@ -15,3 +15,5 @@ train:
   max_epochs: 10
   gpus: 0
   seed: 42
+  mlflow_tracking_uri: "mlruns"
+  experiment_name: "sales-forecast"

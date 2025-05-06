@@ -3,7 +3,7 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from pytorch_lightning import LightningDataModule
 from sklearn.model_selection import train_test_split
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 from src.ml.data.dataset import SalesDataset
 from src.config.schema import DataConfig
 
@@ -11,7 +11,7 @@ from src.config.schema import DataConfig
 class SalesDataModule(LightningDataModule):
     def __init__(self, cfg: DictConfig):
         super().__init__()
-        self.cfg: DataConfig = OmegaConf.to_object(cfg.data)  # Cast to dataclass type
+        self.cfg: DataConfig = DataConfig(**cfg.data)
 
     def setup(self, stage: Optional[str] = None) -> None:
         df = pd.read_csv(self.cfg.csv_path, parse_dates=["Date"])
