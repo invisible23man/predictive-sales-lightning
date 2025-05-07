@@ -52,17 +52,19 @@ def show_prediction_page():
 
         # --- Plot historical + prediction
         fig, ax = plt.subplots(figsize=(8, 4))
-        full_series = series + [prediction]  # extend historical with prediction
+
+        # Plot historical series in blue
+        ax.plot(range(expected), series, label="Historical", marker="o", color="blue")
+
+        # Plot a red line from last historical point to prediction
         ax.plot(
-            range(len(full_series)),
-            full_series,
-            label="Forecast",
-            marker="o",
+            [expected - 1, expected],
+            [series[-1], prediction],
+            label="Prediction",
             color="red",
+            marker="o",
         )
-        ax.axvline(
-            x=len(series) - 1, linestyle="--", color="gray", alpha=0.5
-        )  # Optional: mark cutoff
+
         ax.set_title(f"Sales Forecast – {category}")
         ax.set_xlabel("Time Step")
         ax.set_ylabel("Sales")
