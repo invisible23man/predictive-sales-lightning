@@ -4,7 +4,7 @@ from typing import List
 
 import numpy as np
 import torch
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 from src.ml.models.model import CNNLSTMForecastModel
 
@@ -46,3 +46,16 @@ class SalesForecaster:
 
         # Denormalize output
         return float(y_hat.item() * self.series_std + self.series_mean)
+
+    @classmethod
+    def from_category(cls, category: str):
+        base_cfg = OmegaConf.load("src/config/config.yaml")
+
+        # Patch paths for this category
+        base_cfg.data.item_id = category
+        base_cfg.train.checkpoint_path = f"checkpoints/model_{category.lower()}.ckpt"
+        base_cfg.train.normalization_path = (
+            f"checkpoints/normalization_{category.lower()}.json"
+        )
+
+        return cls(base_cfg)
