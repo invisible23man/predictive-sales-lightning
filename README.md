@@ -30,7 +30,7 @@ Services:
 
 * FastAPI: [http://localhost:8000/docs](http://localhost:8000/docs)
 * Streamlit Dashboard: [http://localhost:8501](http://localhost:8501)
-* MLflow Tracking UI: [http://localhost:5000](http://localhost:5000)
+* MLflow Tracking UI: [http://localhost:5005](http://localhost:5005)
 
 ---
 
